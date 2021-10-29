@@ -1,5 +1,6 @@
 import socket
 from cryptography.fernet import Fernet
+#import psutil             
 
 clientSocketTCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = socket.gethostbyname(socket.gethostname())
@@ -18,6 +19,7 @@ def clientTCP():
 
     while True:
         message = input() # Temperatura cpu
+        #message = str(psutil.cpu_percent(interval=1))
         clientSocketTCP.send(f.encrypt(message.encode()))
         mymessage = clientSocketTCP.recv(buffer) # Receive
 

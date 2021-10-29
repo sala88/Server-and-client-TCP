@@ -5,7 +5,7 @@ from _thread import *
 
 serverSocketTCP =  socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 localIP = socket.gethostbyname(socket.gethostname())
-localPort = 801
+localPort = 8014
 buffer = 2048
 # Fernet key must be 32 url-safe base64-encoded bytes.
 key = b'lt99kum1f2cuaYI8qGQ0HKOJW3weImO49S8661Elq-U=' 
