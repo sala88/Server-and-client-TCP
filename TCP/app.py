@@ -1,16 +1,34 @@
 import socket
 from cryptography.fernet import Fernet
 from _thread import *
+import threading
 
+from flask import Flask, render_template
+from flask_socketio import SocketIO
+
+app = Flask(__name__)
+app.config["SECRET_KEY"] = "asdfjksdhgiuhsfgiufugh"
+socketio = SocketIO(app)
+
+#globalMessage = ""
 
 serverSocketTCP =  socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 localIP = socket.gethostbyname(socket.gethostname())
 localPort = 8014
+hostServerWeb = "0.0.0.0"
+portServerWeb = 5000
 buffer = 2048
 # Fernet key must be 32 url-safe base64-encoded bytes.
 key = b'lt99kum1f2cuaYI8qGQ0HKOJW3weImO49S8661Elq-U=' 
 f = Fernet(key)
 threadCount = 0
+
+
+@app.route('/')
+def index():
+    return render_template("index.html")
+
+
 
 def messageParser(mymessage, connectionSocket):
 
@@ -20,7 +38,11 @@ def messageParser(mymessage, connectionSocket):
 
     try:
         mymessage = f.decrypt(mymessage).decode('utf-8')
+
         print('Il client invia:' + mymessage)
+        socketio.emit("test", mymessage)
+
+        # Salvarlo da qualche parte: mymessage
 
         cmd = mymessage.split("|")
 
@@ -71,10 +93,10 @@ def serverTCP():
         threadCount = threadCount + 1
         print("Si p collegato un nuovo client " + str(threadCount))
 
-
-
 def main():
     serverTCP()
 
 if __name__ == "__main__":
-    main()
+
+    threading.Thread(target=lambda: socketio.run(app, hostServerWeb=hostServerWeb, port=portServerWeb, debug=True, use_reloader=False)).start()
+    serverTCP()

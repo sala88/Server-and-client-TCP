@@ -1,9 +1,9 @@
 import socket
 from cryptography.fernet import Fernet
-#import psutil             
+import psutil             
 
 clientSocketTCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = socket.gethostbyname(socket.gethostname())
+host = '127.0.0.1'
 port = 8014
 buffer = 2048
 # Fernet key must be 32 url-safe base64-encoded bytes.
@@ -18,8 +18,10 @@ def clientTCP():
         print(str(e))
 
     while True:
-        message = input() # Temperatura cpu
-        #message = str(psutil.cpu_percent(interval=1))
+        #message = input() # Temperatura cpu
+        message = str(psutil.cpu_percent(interval=1))
+        # Dato + Timestamp. ZULU(no problemi con i fusi)
+        
         clientSocketTCP.send(f.encrypt(message.encode()))
         mymessage = clientSocketTCP.recv(buffer) # Receive
 
